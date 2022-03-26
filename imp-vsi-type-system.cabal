@@ -1,0 +1,21 @@
+name:                imp-vsi-type-system
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/aslanix/imp-vsi-type-system#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Aslan Askarov
+maintainer:          aslan@askarov.net
+copyright:           BSD
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable imp-vsi-type-system
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  other-modules:       Imp, Examples, Types
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5, MissingH

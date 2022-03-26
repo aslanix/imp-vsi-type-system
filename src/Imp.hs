@@ -92,12 +92,13 @@ step (Seq c1 c2, m) =
           _    -> (Seq c1' c2, m')
 
 step (If e c1 c2, m) =
-    case (exprEval e m) of
+    case exprEval e m of
         0 -> (c2, m)
         _ -> (c1, m)
 
 step (While e c, m) = (If e (Seq c (While e c)) Skip, m)
 
+step (Stop, _) = error "impossible case"
 
 
 -- END OF SEMANTICS
@@ -125,8 +126,7 @@ evalF n config =
 -- print variables in vars on screen
 
 printMem :: Memory -> [VarName] -> IO ()
-printMem m vars =
-    mapM_ ( \x ->  putStrLn (x ++ ": " ++  (show (m x))) ) vars
+printMem m = mapM_ ( \x ->  putStrLn (x ++ ": " ++  show (m x)) )
 
 
 -- run program c with fuel n and print the variable values
@@ -137,58 +137,7 @@ runF n vars c  =
         Finished m -> printMem m vars
 
 
--- Some helper function to run our program for at most 100 steps
-
-run100 = runF 100
 
 
 
--- EXAMPLES
 
--- Example "initialized-to-zero" memory
-
-mZ = \x -> 0
-
-
--- Some memory environments with different secrets
-
-m0 = update mZ "y_s" 0
-m1 = update mZ "y_s" 1
-
--- Sample programs in AST -- because someone is lazy to implement a parser
-
-
--- x_p := y_s
-
-example1 = Assign "x_p" (VarExpr "y_s")
-
--- y_s := 42; x_p := y_s
-
-example3 = Seq (Assign "y_s" (IntExpr 42))
-               (Assign "x_p" (VarExpr "y_s"))
-
---
-
-example4 = If (VarExpr "y_s")               -- if y_s
-                (Assign "x_p" (IntExpr 1))  --     then x_p := 1
-                (Assign "x_p" (IntExpr 0))  --     else x_p := 0
-
-
-exercise2 =  While (VarExpr "y_s") (Skip)
-
----
-
-varsOfInterest = ["x_p", "y_s"]
-
-runEx1  = run100 varsOfInterest (example1, mZ)
-
-runEx4a = run100 varsOfInterest (example4, m0)
-
-runEx4b = run100 varsOfInterest (example4, m1)
-
-runExr2 = run100 varsOfInterest (exercise2, m1) -- try changing the memory to m0
-
-
--- run our example;
-
-runExample = runExr2 -- try substituting for different runs here

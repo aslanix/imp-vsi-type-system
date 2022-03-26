@@ -117,7 +117,3 @@ initEnv vars =
   foldl (\env var -> update env var (levelFromName var)) allSecretEnv vars
 
 
--- shortcut to check programs with varsOfInterest
--- note that starting program counter label is Public
---
-checkWithVarsOfInterest = cmdType (initEnv varsOfInterest) Public
